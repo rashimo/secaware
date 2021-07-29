@@ -1,6 +1,6 @@
 # Summary
 
-If you are using Microsoft Defender for Endpoint for your SOC operation, be cautious when collecting suppport logs with "Microsoft Defender for Endpoint Client Analyzer" tool via live a response session. If an endpoint has been compromised to an extend and the attacker has permissions to write to specific paths, he can conduct a PowerShell Module Implant atack. Below is a description of a conditional privilege escalation attack using the Powershell Module Implant technique. Microsoft doesn't recognize this as an vulnerability since by default the paths listed in "Preconditions for the Attack" are not writable by a none admin user. Fair point and understandable. But nevertheless this  information should be available to the public. 
+If you are using Microsoft Defender for Endpoint for your SOC operation, be cautious when collecting suppport logs with "Microsoft Defender for Endpoint Client Analyzer" tool via a live response session. If an endpoint has been compromised to an extend and the attacker has permissions to write to specific paths, he can conduct a PowerShell module implant atack. Below is a description of a conditional privilege escalation attack using the PowerShell module implant technique. Microsoft doesn't recognize this as an vulnerability since by default the paths listed in "Preconditions for the Attack" are not writable by a none admin user. Fair point and understandable. 
     
 # Description
 
