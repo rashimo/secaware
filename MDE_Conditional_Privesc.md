@@ -16,9 +16,14 @@ When contacting support, Microsoft may ask for the output package of the "Micros
     
 ## Steps to Reproduce
  
-The "Microsoft Defender for Endpoint Client Analyzer" tool is available at the following URL https://aka.ms/MDELiveAnalyzer (a compressed MDELiveAnalyzer.ps1 script). The script when uploaded can be run in the Live response command console as "run MDELiveAnalyzer.ps1". As seen in the figure **figure1**, the script drops **MDEClientAnalyzer.ps1** with some additional tools. 
+The "Microsoft Defender for Endpoint Client Analyzer" tool is available at the following URL https://aka.ms/MDELiveAnalyzer (a compressed MDELiveAnalyzer.ps1 script). The script when uploaded can be run in the Live response command console as "run MDELiveAnalyzer.ps1". As seen below, the script drops **MDEClientAnalyzer.ps1** with some additional tools. 
 
-The script MDEClientAnalyzer.ps1, dropped by MDELiveAnalyzer.ps1, is carefully designed and checks the integrity of executables via the **Check-Command-verified** function which calls the **CheckAuthenticodeSignature** function to check the signature of executables. Part of the function is visible in the figure **figure2**.
+![alt text](https://github.com/rashimo/secaware/blob/main/figure1.JPG?raw=true)
+
+
+The script MDEClientAnalyzer.ps1, dropped by MDELiveAnalyzer.ps1, is carefully designed and checks the integrity of executables via the **Check-Command-verified** function which calls the **CheckAuthenticodeSignature** function to check the signature of executables. Part of the function is visible below. 
+
+![alt text](https://github.com/rashimo/secaware/blob/main/figure2.JPG?raw=true)
    
 In the privilege escalation attack we are trying to plant a malicious **BitsTransfer** module in one of the default paths of PowerShell modules. The PSModulePath environment variable stores the paths to the locations of the modules that are installed on disk. PowerShell uses this variable to locate modules when the user does not specify the full path to a module. In the Live response session, the PSModulePath environment variable contains the following paths:
 
@@ -80,9 +85,6 @@ The attacker that planted the malicious module in "C:\Program Files\WindowsPower
 
 Once a SOC analyst establishes a live response session, uploads the MDELiveAnalyzer.ps1 scripts and runs it, the attacker gets a reverse shell to the victim as "NT Authority\System". In the figure **figure3** we can see the SOC analyst running MDELiveAnalyzer.ps1 and the output of the malicious **BitsTransfer** module. In the figure **figure4** we can see an established reverse shell to the attacker machine. It is also visible that the reverse shell runs whit the privileges of "nt authority\system". This concludes our privilege escalation attack.
 
-## Supporting materials/ references:
-    
-* figure1.JPG
-* figure2.JPG
-* figure3.JPG
-* figure4.JPG
+![alt text](https://github.com/rashimo/secaware/blob/main/figure3.JPG?raw=true)
+
+![alt text](https://github.com/rashimo/secaware/blob/main/figure4.JPG?raw=true)
