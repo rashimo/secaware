@@ -1,25 +1,26 @@
 # Summary
-    
-When contacting support, Microsoft may ask for the output package of the "Microsoft Defender for  Endpoint Client Analyzer" tool. This guidance is available in the article "Collect support logs in Microsoft Defender for Endpoint using live response" ( https://docs.microsoft.com/en-us/microsof-365/security/defender-endpoint/troubleshoot-collect-support-log?view=o365-worldwide). I discovered that the "Microsoft Defender for Endpoint Client Analyzer" tool does not check the integrity of PowerShell modules and allows an attacker to gain “nt authority\system” privileges on the victim machine.
+
+If you are using Microsoft Defender for Endpoint for your SOC operation, be cautious when collecting suppport logs with "Microsoft Defender for Endpoint Client Analyzer" tool via live a response session. If an endpoint has been compromised to an extend and the attacker has permissions to write to specific paths, he can conduct a PowerShell Module Implant atack. Below is a description of a conditional privilege escalation attack using the Powershell Module Implant technique. Microsoft doesn't recognize this as an vulnerability since by default the paths listed in "Preconditions for the Attack" are not writable by a none admin user. Fair point and understandable. But nevertheless this  information should be available to the public. 
     
 # Description
+
+When contacting support, Microsoft may ask for the output package of the "Microsoft Defender for  Endpoint Client Analyzer" tool. This guidance is available in the article "Collect support logs in Microsoft Defender for Endpoint using live response" (https://docs.microsoft.com/en-us/microsoft-365/security/defender-endpoint/troubleshoot-collect-support-log?view=o365-worldwide). I discovered that the "Microsoft Defender for Endpoint Client Analyzer" tool does not check the integrity of PowerShell modules and allows an attacker to gain "nt authority\system" privileges on the victim machine.
 
 ## Preconditions for the Attack
     
 * The user has permissions to write into one of the following directories on the victim machine:
-   * WindowsPowerShell\Modules
+   * .\WindowsPowerShell\Modules
    * C:\Program Files\WindowsPowerShell\Modules
    * C:\Windows\system32\WindowsPowerShell\v1.0\Modules   
    * C:\Program Files\Microsoft Monitoring Agent\Agent\PowerShell
 
-* A SOC analyst establishes a Live response session to the victim in MDE and runs the "Microsoft  Defender for Endpoint Client Analyzer" tool
+* A SOC analyst establishes a Live response session to the victim in Microsoft 365 Security Center and runs the "Microsoft  Defender for Endpoint Client Analyzer" tool
     
 ## Steps to Reproduce
  
-The "Microsoft Defender for Endpoint Client Analyzer" tool is available at the following URL https://aka.ms/MDELiveAnalyzer (a compressed MDELiveAnalyzer.ps1 script). The script when uploaded can be run in the Live response command console as "run MDELiveAnalyzer.ps1". As seen below, the script drops **MDEClientAnalyzer.ps1** with some additional tools. 
+The "Microsoft Defender for Endpoint Client Analyzer" tool is available at the following URL https://aka.ms/MDELiveAnalyzer (a compressed MDELiveAnalyzer.ps1 script). The script when uploaded can be run in the Live response command console from  Microsoft 365 Security Center as "run MDELiveAnalyzer.ps1". As seen below, the script drops **MDEClientAnalyzer.ps1** with some additional tools. 
 
 ![alt text](https://github.com/rashimo/secaware/blob/main/MDE_Conditional_Privesc/figure1.JPG?raw=true)
-
 
 The script MDEClientAnalyzer.ps1, dropped by MDELiveAnalyzer.ps1, is carefully designed and checks the integrity of executables via the **Check-Command-verified** function which calls the **CheckAuthenticodeSignature** function to check the signature of executables. Part of the function is visible below. 
 
@@ -83,7 +84,7 @@ The other part of the malicious module prints the environment variable PSModuleP
 
 The attacker that planted the malicious module in "C:\Program Files\WindowsPowerShell\Modules\BitsTransfer\BitsTransfer.psm1" is now waiting for the live response sessions and the collection of the output package of the "Microsoft Defender for Endpoint Client Analyzer" tool.
 
-Once a SOC analyst establishes a live response session, uploads the MDELiveAnalyzer.ps1 scripts and runs it, the attacker gets a reverse shell to the victim as "NT Authority\System". In the figure **figure3** we can see the SOC analyst running MDELiveAnalyzer.ps1 and the output of the malicious **BitsTransfer** module. In the figure **figure4** we can see an established reverse shell to the attacker machine. It is also visible that the reverse shell runs whit the privileges of "nt authority\system". This concludes our privilege escalation attack.
+Once a SOC analyst establishes a live response session, uploads the MDELiveAnalyzer.ps1 scripts and runs it, the attacker gets a reverse shell to the victim as "NT Authority\System". In the first figure below we can see the SOC analyst running MDELiveAnalyzer.ps1 and the output of the malicious **BitsTransfer** module. In the second figure below we can see an established reverse shell to the attacker machine. It is also visible that the reverse shell runs whit privileges of "nt authority\system". This concludes our privilege escalation attack.
 
 ![alt text](https://github.com/rashimo/secaware/blob/main/MDE_Conditional_Privesc/figure3.JPG?raw=true)
 
